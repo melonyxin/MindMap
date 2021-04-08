@@ -17,10 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    mindmap.cpp \
+    node.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    mindmap.h \
+    node.h
 
 FORMS += \
     mainwindow.ui
