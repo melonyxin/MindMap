@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
+#include <QInputDialog>
 
 Node::Node(QGraphicsItem *parent, QString content)
     : QGraphicsItem(parent)
@@ -18,7 +19,9 @@ Node::Node(QGraphicsItem *parent, QString content)
     this->font.setBold(true);
     this->updateSize();
     this->setCursor(Qt::PointingHandCursor);
-    setAcceptDrops(true);
+
+    closePixmap = QPixmap::fromImage(QImage(":/img/close.png"));
+    addPixmap =  QPixmap::fromImage(QImage(":/img/add.png"));
 }
 
 Node::~Node(){
@@ -48,7 +51,6 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QPen pen;
     pen.setWidth(m_nPenWidth);
     pen.setColor(m_cPenColor);
-    pen.setStyle(Qt::SolidLine);
     painter->setPen(pen);
 
     // 绘制轮廓线
@@ -63,7 +65,29 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         pen.setColor(QColor(87,170,253));
         painter->setPen(pen);
         painter->drawRect(itemRect);
+        if(isClosed()){
+            painter->drawPixmap(QRect(itemRect.topLeft().x()-radiusSize/2,itemRect.topLeft().y()-radiusSize/2,
+                                radiusSize,radiusSize),closePixmap);
+        }
+        if(!addPixmap.isNull()){
+            painter->drawPixmap(QRect(itemRect.bottomRight().x()-radiusSize/2,itemRect.bottomRight().y()-radiusSize/2,
+                                radiusSize,radiusSize),addPixmap);
+        }
     }
+
+    // 主节点跳出不绘制连线
+    if(parentItem() == 0){
+        return;
+    }
+    pen.setWidth(m_nPenWidth);
+    pen.setColor(m_cPenColor);
+    painter->setPen(pen);
+    QPointF parentStart = parentItem()->boundingRect().bottomRight() - QPointF(10,10) - pos();
+    QPainterPath path(parentStart);
+    QPointF c1 = QPointF((parentStart.x() + p.x()) / 2, parentStart.y());
+    QPointF c2 = QPointF((parentStart.x() + p.x()) / 2, p.y());
+    path.cubicTo(c1, c2, p);
+    painter->drawPath(path);
 }
 
 QString Node::getContent(){
@@ -87,13 +111,33 @@ void Node::updateSize(){
     this->size.setHeight(fm.height()+this->padding.height()*2);
 }
 
-//void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-//    QGraphicsItem::mousePressEvent(event);
+qreal Node::getDistance(QPointF a,QPointF b){
+    qreal dx = a.x() - b.x();
+    qreal dy = a.y() - b.y();
+    return sqrt(dx*dx+dy*dy);
+}
 
-//    pressPos = event->scenePos();
-//    startPos = pos();
-//    screenPos = event->pos();
-//}
+bool Node::isClosed() {
+    return (parentItem()!=0) && (!closePixmap.isNull()) && isSelected();
+}
+
+void Node::addNewNode(){
+    Node * newNode = new Node(nullptr,"输入内容");
+    newNode->setParentItem(this);
+    newNode->setPos(QPointF(100,100));
+}
+
+void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    QPointF pos = event->pos();
+    QRectF itemRect = this->getCustomRect();
+    if(getDistance(pos,itemRect.topLeft()) <= radiusSize/2 && isClosed()){
+        delete this;
+    } else if(getDistance(pos,itemRect.bottomRight()) <= radiusSize/2 && isSelected()){
+        addNewNode();
+    }
+
+    QGraphicsItem::mousePressEvent(event);
+}
 
 //void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 //    QGraphicsItem::mouseMoveEvent(event);

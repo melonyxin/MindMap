@@ -12,6 +12,7 @@ public:
     ~Node() override;
     QString getContent();
     void setContent(QString content);
+    void addNewNode();
 
 private:
     QString content;
@@ -26,9 +27,9 @@ private:
     // 画刷设置
     QColor m_cBrushColor;
 
-    QPointF pressPos;
-    QPointF startPos;
-    QPointF screenPos;
+    QPixmap closePixmap;
+    QPixmap addPixmap;
+    int radiusSize = 20;
 
 protected:
     QRectF boundingRect() const override;
@@ -36,7 +37,9 @@ protected:
     QPainterPath shape() const override;
     QRectF getCustomRect(void) const;
     void updateSize();
-//    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
+    qreal getDistance(QPointF a,QPointF b);
+    bool isClosed();
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 //    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
 //    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
 

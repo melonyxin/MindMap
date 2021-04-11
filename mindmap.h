@@ -14,7 +14,6 @@ public:
 private:
     QString filename;
     Node masterNode;
-    Node m;
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
