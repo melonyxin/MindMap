@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsView>
 #include "mindmap.h"
+#include "mindmapview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,5 +21,6 @@ public:
 private:
     Ui::MainWindow *ui;
     QGraphicsView * createTab(MindMap * scene);
+
 };
 #endif // MAINWINDOW_H

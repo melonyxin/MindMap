@@ -15,22 +15,30 @@ public:
 
 private:
     QString content;
-    QSize n_size = QSize(20,20);
-    int m_nInterval = 20;
-    int m_nEllipseWidth = 12;    // 半径
+    QSize size;
+    QFont font;
+
+    QSize padding = QSize(20,10);
 
     // 画笔设置
     QColor m_cPenColor;
-    int m_nPenWidth = 1;
+    int m_nPenWidth = 3;
     // 画刷设置
     QColor m_cBrushColor;
 
+    QPointF pressPos;
+    QPointF startPos;
+    QPointF screenPos;
+
 protected:
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) final;
+    QPainterPath shape() const override;
     QRectF getCustomRect(void) const;
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void updateSize();
+//    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
+//    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
+//    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
 
 
 signals:

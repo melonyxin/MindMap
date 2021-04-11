@@ -2,6 +2,8 @@
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QDebug>
+#include <QGraphicsSceneMouseEvent>
+#include <QObject>
 
 Node::Node(QGraphicsItem *parent, QString content)
     : QGraphicsItem(parent)
@@ -9,7 +11,14 @@ Node::Node(QGraphicsItem *parent, QString content)
     ,m_cBrushColor(200, 100, 100)
 {
     this->content = content;
-    this->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    this->setFlags(QGraphicsItem::ItemIsSelectable |
+                   QGraphicsItem::ItemIsFocusable |
+                   QGraphicsItem::ItemIsMovable);
+    this->font.setPixelSize(25);
+    this->font.setBold(true);
+    this->updateSize();
+    this->setCursor(Qt::PointingHandCursor);
+    setAcceptDrops(true);
 }
 
 Node::~Node(){
@@ -17,21 +26,17 @@ Node::~Node(){
 }
 
 QRectF Node::boundingRect() const {
-    //QRectF rectF = getCustomRect();
-    //if (!this->isSelected())
-        //return rectF;
+    QRectF rectF = getCustomRect();
+    rectF.adjust(-10,-10,10,10);
 
-    //rectF.adjust(-m_nInterval, -m_nInterval, m_nInterval, m_nInterval);
-    //rectF.adjust(-m_nEllipseWidth, -m_nEllipseWidth, m_nEllipseWidth, m_nEllipseWidth);
-
-    //return rectF;
-    return QRectF(-10,-10,50,30);
+    return rectF;
 }
 
-QPainterPath Node::shape() const {
+QPainterPath Node::shape() const
+{
     QPainterPath path;
-    //path.addRect(boundingRect());
-    path.addRect(QRect(-10,-10,50,30));
+    path.addRect(boundingRect());
+
     return path;
 }
 
@@ -45,22 +50,19 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     pen.setColor(m_cPenColor);
     pen.setStyle(Qt::SolidLine);
     painter->setPen(pen);
-    painter->setBrush(QBrush(Qt::red));
 
     // 绘制轮廓线
     QRectF itemRect = this->getCustomRect();
-    painter->drawRect(QRect(-10,-10,50,30));
-    pen.setColor(Qt::white);
+    QPointF p = itemRect.bottomLeft();
+    painter->drawLine(p.x(),p.y(),p.x()+size.width(),p.y());
+    pen.setColor(Qt::black);
     painter->setPen(pen);
-    painter->setBrush(QBrush());
-    painter->drawText(0,10,content);
+    painter->setFont(font);
+    painter->drawText(p.x()+padding.width(), p.y()-padding.height()-2,content);
     if (this->isSelected()){
-        pen.setColor(m_cPenColor);
-        pen.setStyle(Qt::DashLine);
+        pen.setColor(QColor(87,170,253));
         painter->setPen(pen);
-        painter->setBrush(QBrush());
-        QRectF outLintRect = itemRect.adjusted(-20, -20, 50, 30);
-        painter->drawRect(outLintRect);
+        painter->drawRect(itemRect);
     }
 }
 
@@ -68,20 +70,41 @@ QString Node::getContent(){
     return this->content;
 }
 
-QRectF Node::getCustomRect(void) const
-{
+QRectF Node::getCustomRect(void) const {
     QPointF centerPos(0, 0);
-    return QRectF(centerPos.x() - n_size.width() / 2, centerPos.y() - n_size.height() / 2, \
-                  n_size.width(), n_size.height());
-}
-
-void Node::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    return QGraphicsItem::mousePressEvent(event);
+    return QRectF(centerPos.x() - size.width() / 2, centerPos.y() - size.height() / 2, \
+                      size.width(), size.height());
 }
 
 void Node::setContent(QString content){
     this->content = content;
+    this->updateSize();
 }
 
+void Node::updateSize(){
+    QFontMetrics fm(this->font);
+    this->size.setWidth(fm.width(this->content)+this->padding.width()*2);
+    this->size.setHeight(fm.height()+this->padding.height()*2);
+}
 
+//void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+//    QGraphicsItem::mousePressEvent(event);
 
+//    pressPos = event->scenePos();
+//    startPos = pos();
+//    screenPos = event->pos();
+//}
+
+//void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+//    QGraphicsItem::mouseMoveEvent(event);
+//    QPointF mv = pressPos - event->scenePos();
+//    setPos(startPos - mv);
+//    update();
+//}
+
+//void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+//    QGraphicsItem::mouseReleaseEvent(event);
+//    qDebug() << "scene" <<event->scenePos();
+//    qDebug() << "node" <<pos();
+//    qDebug() << "screen" <<event->pos();
+//}

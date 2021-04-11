@@ -19,11 +19,13 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     mindmap.cpp \
+    mindmapview.cpp \
     node.cpp
 
 HEADERS += \
     mainwindow.h \
     mindmap.h \
+    mindmapview.h \
     node.h
 
 FORMS += \
