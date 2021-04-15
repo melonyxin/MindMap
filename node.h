@@ -12,18 +12,21 @@ public:
     ~Node() override;
     QString getContent();
     void setContent(QString content);
+    void setPenColor(QColor c);
     void addNewNode();
+    bool isMasterNode();
 
 private:
     QString content;
     QSize size;
     QFont font;
+    int numOfChild=0;
 
     QSize padding = QSize(20,10);
 
     // 画笔设置
-    QColor m_cPenColor;
-    int m_nPenWidth = 3;
+    QColor penColor;
+    int penWidth = 5;
     // 画刷设置
     QColor m_cBrushColor;
 

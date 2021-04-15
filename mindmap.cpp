@@ -9,6 +9,7 @@ MindMap::MindMap(QWidget *parent, QString filename) : QGraphicsScene(parent)
     this->filename = filename;
     masterNode.setContent("开始");
     masterNode.setPos(QPointF(0,0));
+    masterNode.setPenColor(Qt::white);
 
     this->addItem(&masterNode);
 }

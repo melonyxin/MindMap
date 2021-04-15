@@ -17,6 +17,8 @@ MindMapView::MindMapView(QWidget *parent) : QGraphicsView(parent)
     //反锯齿
     setRenderHints(QPainter::Antialiasing);
     setDragMode(QGraphicsView::ScrollHandDrag);
+
+    setBackgroundBrush(QColor(238,238,243));
 }
 
 void MindMapView::mousePressEvent(QMouseEvent *event) {

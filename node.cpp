@@ -5,16 +5,18 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
 #include <QInputDialog>
+#include "coloranalyzer.h"
 
 Node::Node(QGraphicsItem *parent, QString content)
     : QGraphicsItem(parent)
-    ,m_cPenColor(255, 0, 0)
+    ,penColor(255, 0, 0)
     ,m_cBrushColor(200, 100, 100)
 {
     this->content = content;
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsFocusable |
-                   QGraphicsItem::ItemIsMovable);
+                   QGraphicsItem::ItemIsMovable |
+                   QGraphicsItem::ItemStacksBehindParent);
     this->font.setPixelSize(25);
     this->font.setBold(true);
     this->updateSize();
@@ -49,21 +51,44 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setRenderHint(QPainter::TextAntialiasing, true);
 
     QPen pen;
-    pen.setWidth(m_nPenWidth);
-    pen.setColor(m_cPenColor);
+    pen.setWidth(penWidth);
+    pen.setColor(penColor);
     painter->setPen(pen);
 
-    // 绘制轮廓线
     QRectF itemRect = this->getCustomRect();
     QPointF p = itemRect.bottomLeft();
-    painter->drawLine(p.x(),p.y(),p.x()+size.width(),p.y());
+
+    // 绘制轮廓线
+    if(isMasterNode()){
+        painter->fillRect(itemRect,Qt::white);
+        painter->drawRect(itemRect);
+    } else {
+        painter->drawLine(p.x(),p.y(),p.x()+size.width(),p.y());
+        Node * parent = (Node *)parentItem();
+        QPointF parentStart;
+        if(parent->isMasterNode()){
+            parentStart = parent->boundingRect().center() - QPointF(10,0) - pos();
+        } else {
+            parentStart = parent->boundingRect().bottomRight() - QPointF(10,10) - pos();
+        }
+        QPainterPath path(parentStart);
+        QPointF c1 = QPointF((parentStart.x() + p.x()) / 2, parentStart.y());
+        QPointF c2 = QPointF((parentStart.x() + p.x()) / 2, p.y());
+        path.cubicTo(c1, c2, p);
+        painter->drawPath(path);
+    }
+
+    // 绘制内容文字
     pen.setColor(Qt::black);
     painter->setPen(pen);
     painter->setFont(font);
     painter->drawText(p.x()+padding.width(), p.y()-padding.height()-2,content);
+
+    // 绘制焦点框线
     if (this->isSelected()){
-        pen.setColor(QColor(87,170,253));
+        pen.setColor(QColor(213,213,237));
         painter->setPen(pen);
+        itemRect.adjust(-penWidth,-penWidth,penWidth,penWidth);
         painter->drawRect(itemRect);
         if(isClosed()){
             painter->drawPixmap(QRect(itemRect.topLeft().x()-radiusSize/2,itemRect.topLeft().y()-radiusSize/2,
@@ -74,20 +99,6 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
                                 radiusSize,radiusSize),addPixmap);
         }
     }
-
-    // 主节点跳出不绘制连线
-    if(parentItem() == 0){
-        return;
-    }
-    pen.setWidth(m_nPenWidth);
-    pen.setColor(m_cPenColor);
-    painter->setPen(pen);
-    QPointF parentStart = parentItem()->boundingRect().bottomRight() - QPointF(10,10) - pos();
-    QPainterPath path(parentStart);
-    QPointF c1 = QPointF((parentStart.x() + p.x()) / 2, parentStart.y());
-    QPointF c2 = QPointF((parentStart.x() + p.x()) / 2, p.y());
-    path.cubicTo(c1, c2, p);
-    painter->drawPath(path);
 }
 
 QString Node::getContent(){
@@ -105,6 +116,10 @@ void Node::setContent(QString content){
     this->updateSize();
 }
 
+void Node::setPenColor(QColor c){
+    this->penColor = c;
+}
+
 void Node::updateSize(){
     QFontMetrics fm(this->font);
     this->size.setWidth(fm.width(this->content)+this->padding.width()*2);
@@ -118,13 +133,25 @@ qreal Node::getDistance(QPointF a,QPointF b){
 }
 
 bool Node::isClosed() {
-    return (parentItem()!=0) && (!closePixmap.isNull()) && isSelected();
+    return (!isMasterNode()) && (!closePixmap.isNull()) && isSelected();
+}
+
+bool Node::isMasterNode(){
+    return parentItem()==0;
 }
 
 void Node::addNewNode(){
     Node * newNode = new Node(nullptr,"输入内容");
     newNode->setParentItem(this);
     newNode->setPos(QPointF(100,100));
+    if(isMasterNode()){
+        QColor c = ColorAnalyzer::getColor(numOfChild);
+        newNode->setPenColor(c);
+    } else {
+        newNode->setPenColor(penColor);
+    }
+
+    numOfChild++;
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
