@@ -10,10 +10,17 @@ class MindMap : public QGraphicsScene
 public:
     explicit MindMap(QWidget *parent = nullptr, QString filename="");
     QString getFilename();
+    Node * getMasterNode();
+    void addMasterNode(Node *node);
+    QString getFilePath();
+    void setFilePath(QString path);
+    void setFileName(QString name);
+    bool isPathEmpty();
 
 private:
     QString filename;
-    Node masterNode;
+    Node *masterNode;
+    QString filepath;
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;

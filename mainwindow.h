@@ -22,5 +22,8 @@ private:
     Ui::MainWindow *ui;
     QGraphicsView * createTab(MindMap * scene);
 
+protected:
+    void saveMindMapFile(MindMap * map);
+    MindMap * openMindMapFile();
 };
 #endif // MAINWINDOW_H

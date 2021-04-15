@@ -120,6 +120,10 @@ void Node::setPenColor(QColor c){
     this->penColor = c;
 }
 
+QColor Node::getPenColor(){
+    return penColor;
+}
+
 void Node::updateSize(){
     QFontMetrics fm(this->font);
     this->size.setWidth(fm.width(this->content)+this->padding.width()*2);

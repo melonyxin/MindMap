@@ -19,6 +19,8 @@ SOURCES += \
     coloranalyzer.cpp \
     main.cpp \
     mainwindow.cpp \
+    mapfilereader.cpp \
+    mapfilewriter.cpp \
     mindmap.cpp \
     mindmapview.cpp \
     node.cpp
@@ -26,6 +28,8 @@ SOURCES += \
 HEADERS += \
     coloranalyzer.h \
     mainwindow.h \
+    mapfilereader.h \
+    mapfilewriter.h \
     mindmap.h \
     mindmapview.h \
     node.h

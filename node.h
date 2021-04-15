@@ -13,6 +13,7 @@ public:
     QString getContent();
     void setContent(QString content);
     void setPenColor(QColor c);
+    QColor getPenColor();
     void addNewNode();
     bool isMasterNode();
 
