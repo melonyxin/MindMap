@@ -18,7 +18,7 @@ QJsonObject MapFileWriter::nodeToJson(Node *node){
     data.insert("content", node->getContent());
     data.insert("pos_x", node->pos().x());
     data.insert("pos_y", node->pos().y());
-    data.insert("color", node->getPenColor().name());
+    data.insert("indexOfMaster", node->getIndexOfMaster());
 
     QList<QGraphicsItem *> childs = node->childItems();
     for(int i=0;i<childs.length();i++){
@@ -36,6 +36,7 @@ QJsonObject MapFileWriter::mindmapToJson(MindMap *map){
     QJsonObject masterNode = nodeToJson(map->getMasterNode());
 
     root.insert("MasterNode", masterNode);
+    root.insert("IndexOfStyle", map->getIndexOfStyle());
     root.insert("FileName", map->getFilename());
 
     return root;

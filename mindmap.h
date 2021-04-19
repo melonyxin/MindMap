@@ -16,11 +16,14 @@ public:
     void setFilePath(QString path);
     void setFileName(QString name);
     bool isPathEmpty();
+    int getIndexOfStyle();
+    void setIndexOfStyle(int index);
 
 private:
     QString filename;
     Node *masterNode;
     QString filepath;
+    int indexOfStyle=0;
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;

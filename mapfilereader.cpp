@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QJsonDocument>
+#include <QDebug>
 
 MapFileReader::MapFileReader(QString path)
 {
@@ -16,7 +17,7 @@ Node * MapFileReader::jsonToNode(QJsonObject root){
 
     Node * node = new Node();
     node->setContent(data.value("content").toString());
-    node->setPenColor(QColor(data.value("color").toString()));
+    node->setIndexOfMaster(data.value("indexOfMaster").toInt());
 
     for(int i=0,len=children.size();i<len;i++){
         QJsonObject child = children.at(i).toObject();
@@ -39,6 +40,7 @@ MindMap * MapFileReader::jsonToMap(QJsonObject root){
     Node * masterNode = jsonToNode(master);
     map->addMasterNode(masterNode);
     masterNode->setParentItem(0);
+    map->setIndexOfStyle(root.value("IndexOfStyle").toInt());
     int x = master.value("pos_x").toInt();
     int y = master.value("pos_y").toInt();
     masterNode->setPos(QPointF(x,y));

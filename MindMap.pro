@@ -16,23 +16,31 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    blockstyle.cpp \
     coloranalyzer.cpp \
+    colorlinestyle.cpp \
     main.cpp \
     mainwindow.cpp \
     mapfilereader.cpp \
     mapfilewriter.cpp \
     mindmap.cpp \
     mindmapview.cpp \
-    node.cpp
+    node.cpp \
+    nodestyle.cpp \
+    nodestyleanalyzer.cpp
 
 HEADERS += \
+    blockstyle.h \
     coloranalyzer.h \
+    colorlinestyle.h \
     mainwindow.h \
     mapfilereader.h \
     mapfilewriter.h \
     mindmap.h \
     mindmapview.h \
-    node.h
+    node.h \
+    nodestyle.h \
+    nodestyleanalyzer.h
 
 FORMS += \
     mainwindow.ui

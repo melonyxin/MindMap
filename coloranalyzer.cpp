@@ -15,6 +15,9 @@ const int ColorAnalyzer::color[6][3]={
 };
 
 QColor ColorAnalyzer::getColor(int index){
+    if(index <= 0) return Qt::white;
+
+    index--;
     int i = index % num;
     int r = index / num % round;
 

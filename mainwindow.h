@@ -20,6 +20,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QList<QAction *> actionList;
+    QList<int> mapStyleList;
     QGraphicsView * createTab(MindMap * scene);
 
 protected:

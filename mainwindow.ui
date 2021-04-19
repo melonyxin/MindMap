@@ -40,22 +40,55 @@
      <string>帮助</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuStyle">
+    <property name="title">
+     <string>样式</string>
+    </property>
+    <addaction name="actionColorLine"/>
+    <addaction name="actionBlock"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menuStyle"/>
    <addaction name="menu_2"/>
   </widget>
   <action name="actionNewFile">
    <property name="text">
     <string>新建文件</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionOpenFile">
    <property name="text">
     <string>打开文件</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSaveFile">
    <property name="text">
     <string>保存文件</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionColorLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>彩线型</string>
+   </property>
+  </action>
+  <action name="actionBlock">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>框图型</string>
    </property>
   </action>
  </widget>

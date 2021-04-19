@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include "mapfilewriter.h"
 #include "mapfilereader.h"
+#include "colorlinestyle.h"
 #include <QMessageBox>
 #include <QDebug>
 
@@ -17,24 +18,28 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //  样式选项互斥组
+    QActionGroup *grp = new QActionGroup(this);
+    actionList = ui->menuStyle->actions();
+    for(int i=0;i<actionList.length();i++)
+        grp->addAction(actionList[i]);
+
     QTabWidget * tabWidget = new QTabWidget();
     QTabBar * tabBar = tabWidget->tabBar();
     tabWidget->setTabsClosable(true);
 
-    //MindMap * board1 = new MindMap(this, "first");
-//    MindMap * board2 = new MindMap(this, "second");
-//    MindMap * board3 = new MindMap(this, "third");
+    connect(grp,&QActionGroup::triggered,this,[=](QAction* style){
+        int index = actionList.indexOf(style);
+        int current = tabBar->currentIndex();
+        if(current < 0) return;
+        if(current >= mapStyleList.length()) return;
+        if(mapStyleList.at(current) == index) return;
 
-//    tabWidget->addTab(createTab(board1), board1->getFilename());
-//    tabWidget->addTab(createTab(board2), board2->getFilename());
-//    tabWidget->addTab(createTab(board3), board3->getFilename());
-
-//    Node *masterNode = new Node();
-//    masterNode->setContent("开始");
-//    masterNode->setPos(QPointF(0,0));
-//    masterNode->setPenColor(Qt::white);
-//    board1->addMasterNode(masterNode);
-//    tabWidget->addTab(createTab(board1), board1->getFilename());
+        QGraphicsView * view = (QGraphicsView *) tabWidget->currentWidget();
+        MindMap * currentMap = (MindMap *) view->scene();
+        currentMap->setIndexOfStyle(index);
+        mapStyleList[current] = index;
+    });
 
     connect(tabBar,&QTabBar::tabCloseRequested,tabWidget,&QTabWidget::removeTab);
     connect(ui->actionNewFile,&QAction::triggered,[=](){
@@ -42,8 +47,9 @@ MainWindow::MainWindow(QWidget *parent)
         Node *masterNode = new Node();
         masterNode->setContent("开始");
         masterNode->setPos(QPointF(0,0));
-        masterNode->setPenColor(Qt::white);
         board->addMasterNode(masterNode);
+        board->setIndexOfStyle(0);
+        mapStyleList.append(board->getIndexOfStyle());
         tabWidget->addTab(createTab(board),board->getFilename());
     });
 
@@ -57,13 +63,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionOpenFile,&QAction::triggered,[=](){
         MindMap * map = openMindMapFile();
         if(map!=nullptr){
+            mapStyleList.append(map->getIndexOfStyle());
             tabWidget->addTab(createTab(map),map->getFilename());
         }
     });
 
+    connect(tabBar,&QTabBar::currentChanged,[=](int index){
+        if(index < 0) return;
+        if(index >= mapStyleList.length()) return;
+        if(mapStyleList[index] >= actionList.length()) return;
+        actionList[mapStyleList[index]]->setChecked(true);
+    });
+
+    connect(tabBar,&QTabBar::tabCloseRequested,[=](int index){
+        mapStyleList.removeAt(index);
+    });
+
     setCentralWidget(tabWidget);
-
-
 }
 
 MainWindow::~MainWindow()

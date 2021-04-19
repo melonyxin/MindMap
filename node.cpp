@@ -6,24 +6,18 @@
 #include <QObject>
 #include <QInputDialog>
 #include "coloranalyzer.h"
+#include "colorlinestyle.h"
 
 Node::Node(QGraphicsItem *parent, QString content)
     : QGraphicsItem(parent)
-    ,penColor(255, 0, 0)
-    ,m_cBrushColor(200, 100, 100)
 {
     this->content = content;
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsFocusable |
                    QGraphicsItem::ItemIsMovable |
                    QGraphicsItem::ItemStacksBehindParent);
-    this->font.setPixelSize(25);
-    this->font.setBold(true);
-    this->updateSize();
-    this->setCursor(Qt::PointingHandCursor);
 
-    closePixmap = QPixmap::fromImage(QImage(":/img/close.png"));
-    addPixmap =  QPixmap::fromImage(QImage(":/img/add.png"));
+    this->setCursor(Qt::PointingHandCursor);
 }
 
 Node::~Node(){
@@ -32,7 +26,9 @@ Node::~Node(){
 
 QRectF Node::boundingRect() const {
     QRectF rectF = getCustomRect();
-    rectF.adjust(-10,-10,10,10);
+    if(nodePainter==nullptr) return rectF;
+    QSize margin = nodePainter->getMargin();
+    rectF.adjust(-margin.width(),-margin.height(),margin.width(),margin.height());
 
     return rectF;
 }
@@ -46,59 +42,11 @@ QPainterPath Node::shape() const
 }
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter->setRenderHint(QPainter::TextAntialiasing, true);
+    painter->setRenderHint(QPainter::Antialiasing, true);              // 图元边缘抗锯齿
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);     // 平滑的像素图变换算法
+    painter->setRenderHint(QPainter::TextAntialiasing, true);          // 文本抗锯齿
 
-    QPen pen;
-    pen.setWidth(penWidth);
-    pen.setColor(penColor);
-    painter->setPen(pen);
-
-    QRectF itemRect = this->getCustomRect();
-    QPointF p = itemRect.bottomLeft();
-
-    // 绘制轮廓线
-    if(isMasterNode()){
-        painter->fillRect(itemRect,Qt::white);
-        painter->drawRect(itemRect);
-    } else {
-        painter->drawLine(p.x(),p.y(),p.x()+size.width(),p.y());
-        Node * parent = (Node *)parentItem();
-        QPointF parentStart;
-        if(parent->isMasterNode()){
-            parentStart = parent->boundingRect().center() - QPointF(10,0) - pos();
-        } else {
-            parentStart = parent->boundingRect().bottomRight() - QPointF(10,10) - pos();
-        }
-        QPainterPath path(parentStart);
-        QPointF c1 = QPointF((parentStart.x() + p.x()) / 2, parentStart.y());
-        QPointF c2 = QPointF((parentStart.x() + p.x()) / 2, p.y());
-        path.cubicTo(c1, c2, p);
-        painter->drawPath(path);
-    }
-
-    // 绘制内容文字
-    pen.setColor(Qt::black);
-    painter->setPen(pen);
-    painter->setFont(font);
-    painter->drawText(p.x()+padding.width(), p.y()-padding.height()-2,content);
-
-    // 绘制焦点框线
-    if (this->isSelected()){
-        pen.setColor(QColor(213,213,237));
-        painter->setPen(pen);
-        itemRect.adjust(-penWidth,-penWidth,penWidth,penWidth);
-        painter->drawRect(itemRect);
-        if(isClosed()){
-            painter->drawPixmap(QRect(itemRect.topLeft().x()-radiusSize/2,itemRect.topLeft().y()-radiusSize/2,
-                                radiusSize,radiusSize),closePixmap);
-        }
-        if(!addPixmap.isNull()){
-            painter->drawPixmap(QRect(itemRect.bottomRight().x()-radiusSize/2,itemRect.bottomRight().y()-radiusSize/2,
-                                radiusSize,radiusSize),addPixmap);
-        }
-    }
+    nodePainter->paint(painter,(Node *)parentItem(),this);
 }
 
 QString Node::getContent(){
@@ -107,8 +55,9 @@ QString Node::getContent(){
 
 QRectF Node::getCustomRect(void) const {
     QPointF centerPos(0, 0);
+
     return QRectF(centerPos.x() - size.width() / 2, centerPos.y() - size.height() / 2, \
-                      size.width(), size.height());
+                  size.width(), size.height());
 }
 
 void Node::setContent(QString content){
@@ -116,18 +65,32 @@ void Node::setContent(QString content){
     this->updateSize();
 }
 
-void Node::setPenColor(QColor c){
-    this->penColor = c;
+void Node::setIndexOfMaster(int index){
+    indexOfMaster = index;
 }
 
-QColor Node::getPenColor(){
-    return penColor;
+void Node::setNodePainter(NodeStyle * style){
+    if(isMasterNode()) {
+        delete nodePainter;
+    }
+
+    nodePainter = style;
+    this->updateSize();
+    setChildNodeStyle(style);
 }
 
+void Node::setChildNodeStyle(NodeStyle *style){
+    QList<QGraphicsItem *> list = childItems();
+    for(int i=0;i<list.length();i++){
+        Node * node =(Node *) list[i];
+        node->setNodePainter(style);
+    }
+}
 void Node::updateSize(){
-    QFontMetrics fm(this->font);
-    this->size.setWidth(fm.width(this->content)+this->padding.width()*2);
-    this->size.setHeight(fm.height()+this->padding.height()*2);
+    if(nodePainter==nullptr) return;
+    QFontMetrics fm(nodePainter->getFont());
+    this->size.setWidth(fm.width(this->content)+nodePainter->getPadding().width()*2);
+    this->size.setHeight(fm.height()+nodePainter->getPadding().height()*2);
 }
 
 qreal Node::getDistance(QPointF a,QPointF b){
@@ -136,8 +99,16 @@ qreal Node::getDistance(QPointF a,QPointF b){
     return sqrt(dx*dx+dy*dy);
 }
 
+int Node::getIndexOfMaster(){
+    return indexOfMaster;
+}
+
+QSize Node::getSize(){
+    return size;
+}
+
 bool Node::isClosed() {
-    return (!isMasterNode()) && (!closePixmap.isNull()) && isSelected();
+    return (!isMasterNode()) && isSelected();
 }
 
 bool Node::isMasterNode(){
@@ -148,19 +119,19 @@ void Node::addNewNode(){
     Node * newNode = new Node(nullptr,"输入内容");
     newNode->setParentItem(this);
     newNode->setPos(QPointF(100,100));
+    newNode->setNodePainter(nodePainter);
     if(isMasterNode()){
-        QColor c = ColorAnalyzer::getColor(numOfChild);
-        newNode->setPenColor(c);
+        indexOfMaster--;
+        newNode->setIndexOfMaster(-indexOfMaster);
     } else {
-        newNode->setPenColor(penColor);
+        newNode->setIndexOfMaster(getIndexOfMaster());
     }
-
-    numOfChild++;
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF pos = event->pos();
     QRectF itemRect = this->getCustomRect();
+    int radiusSize = nodePainter->getRadiusSize();
     if(getDistance(pos,itemRect.topLeft()) <= radiusSize/2 && isClosed()){
         delete this;
     } else if(getDistance(pos,itemRect.bottomRight()) <= radiusSize/2 && isSelected()){

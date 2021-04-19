@@ -3,15 +3,11 @@
 #include <QToolButton>
 #include <QtDebug>
 #include <QGraphicsSceneMouseEvent>
+#include "nodestyleanalyzer.h"
 
 MindMap::MindMap(QWidget *parent, QString filename) : QGraphicsScene(parent)
 {
     this->filename = filename;
-//    masterNode.setContent("开始");
-//    masterNode.setPos(QPointF(0,0));
-//    masterNode.setPenColor(Qt::white);
-
-//    this->addItem(&masterNode);
 }
 
 QString MindMap::getFilename(){
@@ -38,6 +34,15 @@ QString MindMap::getFilePath(){
 
 void MindMap::setFilePath(QString path){
     filepath = path;
+}
+
+int MindMap::getIndexOfStyle(){
+    return indexOfStyle;
+}
+
+void MindMap::setIndexOfStyle(int index){
+    indexOfStyle = index;
+    masterNode->setNodePainter(NodeStyleAnalyzer::createNodeStyle(index));
 }
 
 bool MindMap::isPathEmpty(){
