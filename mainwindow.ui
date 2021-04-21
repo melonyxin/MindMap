@@ -44,8 +44,16 @@
     <property name="title">
      <string>样式</string>
     </property>
+    <widget class="QMenu" name="menuBlock">
+     <property name="title">
+      <string>框图型</string>
+     </property>
+     <addaction name="actionBlueBlock"/>
+     <addaction name="actionRedBlock"/>
+     <addaction name="actionYellowBlock"/>
+    </widget>
     <addaction name="actionColorLine"/>
-    <addaction name="actionBlock"/>
+    <addaction name="menuBlock"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuStyle"/>
@@ -83,12 +91,28 @@
     <string>彩线型</string>
    </property>
   </action>
-  <action name="actionBlock">
+  <action name="actionBlueBlock">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>框图型</string>
+    <string>天空蓝</string>
+   </property>
+  </action>
+  <action name="actionRedBlock">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>清新红</string>
+   </property>
+  </action>
+  <action name="actionYellowBlock">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>泥土黄</string>
    </property>
   </action>
  </widget>

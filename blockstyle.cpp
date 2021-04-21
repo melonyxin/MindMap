@@ -1,19 +1,21 @@
 #include "blockstyle.h"
 
-BlockStyle::BlockStyle()
+BlockStyle::BlockStyle(QString color)
 {
     font.setPixelSize(25);
     font.setBold(true);
     radiusSize = 20;
     penWidth = 5;
     padding = QSize(20,10);
-    margin = QSize(penWidth*2,penWidth*2);
+    margin = QSize(penWidth+lineWidth,penWidth+lineWidth);
+
+    theme = QColor(color);   // 默认天空蓝
 }
 
 void BlockStyle::paint(QPainter *painter, Node *parent, Node *item){
     QPen pen;
-    pen.setWidth(penWidth);
-    pen.setColor(QColor(115,200,255));
+    pen.setWidth(lineWidth);
+    pen.setColor(theme);
     painter->setPen(pen);
 
     QRectF itemRect = item->getCustomRect();
@@ -21,7 +23,7 @@ void BlockStyle::paint(QPainter *painter, Node *parent, Node *item){
 
     // 绘制轮廓线
     if(item->isMasterNode()){
-        painter->fillRect(itemRect,QColor(115,200,255));
+        painter->fillRect(itemRect,theme);
         painter->drawRect(itemRect);
     } else {
         painter->drawRect(itemRect);
@@ -33,9 +35,8 @@ void BlockStyle::paint(QPainter *painter, Node *parent, Node *item){
         }
 
         QPainterPath path(parentStart);
-        QPointF c1 = QPointF((parentStart.x() + p.x()) / 2, parentStart.y());
-        QPointF c2 = QPointF((parentStart.x() + p.x()) / 2, p.y());
-        path.cubicTo(c1, c2, p);
+        QPointF c = QPointF(parentStart.x()*0.9+p.x()*0.1, p.y());
+        path.quadTo(c,p);
         painter->drawPath(path);
     }
 
@@ -52,6 +53,7 @@ void BlockStyle::paint(QPainter *painter, Node *parent, Node *item){
     // 绘制焦点框线
     if (item->isSelected()){
         pen.setColor(QColor(213,213,237));
+        pen.setWidth(penWidth);
         painter->setPen(pen);
         itemRect.adjust(-penWidth,-penWidth,penWidth,penWidth);
         painter->drawRect(itemRect);

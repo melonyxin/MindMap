@@ -20,9 +20,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     //  样式选项互斥组
     QActionGroup *grp = new QActionGroup(this);
-    actionList = ui->menuStyle->actions();
-    for(int i=0;i<actionList.length();i++)
-        grp->addAction(actionList[i]);
+    QList<QAction *> itemsOfStyle = ui->menuStyle->actions();
+    for(int i=0;i<itemsOfStyle.length();i++){
+        QMenu * menu = itemsOfStyle[i]->menu();
+        if(menu == nullptr)
+            grp->addAction(itemsOfStyle[i]);
+        else {
+            QList<QAction *> options = menu->actions();
+            for(int j=0;j<options.length();j++){
+                grp->addAction(options[j]);
+            }
+        }
+    }
+    actionList = grp->actions();
 
     QTabWidget * tabWidget = new QTabWidget();
     QTabBar * tabBar = tabWidget->tabBar();
