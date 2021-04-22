@@ -27,7 +27,8 @@ SOURCES += \
     mindmapview.cpp \
     node.cpp \
     nodestyle.cpp \
-    nodestyleanalyzer.cpp
+    nodestyleanalyzer.cpp \
+    polylinestyle.cpp
 
 HEADERS += \
     blockstyle.h \
@@ -40,7 +41,8 @@ HEADERS += \
     mindmapview.h \
     node.h \
     nodestyle.h \
-    nodestyleanalyzer.h
+    nodestyleanalyzer.h \
+    polylinestyle.h
 
 FORMS += \
     mainwindow.ui

@@ -52,8 +52,17 @@
      <addaction name="actionRedBlock"/>
      <addaction name="actionYellowBlock"/>
     </widget>
+    <widget class="QMenu" name="menuPolyline">
+     <property name="title">
+      <string>折线型</string>
+     </property>
+     <addaction name="actionBluePoly"/>
+     <addaction name="actionRedPoly"/>
+     <addaction name="actionYellowPoly"/>
+    </widget>
     <addaction name="actionColorLine"/>
     <addaction name="menuBlock"/>
+    <addaction name="menuPolyline"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuStyle"/>
@@ -113,6 +122,30 @@
    </property>
    <property name="text">
     <string>泥土黄</string>
+   </property>
+  </action>
+  <action name="actionBluePoly">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>蓝色</string>
+   </property>
+  </action>
+  <action name="actionRedPoly">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>红色</string>
+   </property>
+  </action>
+  <action name="actionYellowPoly">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>黄色</string>
    </property>
   </action>
  </widget>
