@@ -13,7 +13,7 @@ private:
     QString filepath;
 
 protected:
-    Node *jsonToNode(QJsonObject root);
+    void jsonToNode(QJsonObject root, Node *parent);
     MindMap *jsonToMap(QJsonObject root);
 };
 

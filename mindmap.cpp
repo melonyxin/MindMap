@@ -8,6 +8,8 @@
 MindMap::MindMap(QWidget *parent, QString filename) : QGraphicsScene(parent)
 {
     this->filename = filename;
+    this->setBackgroundBrush(Qt::white);
+    this->nodePainter = NodeStyleAnalyzer::createNodeStyle(indexOfStyle);
 }
 
 QString MindMap::getFilename(){
@@ -42,25 +44,13 @@ int MindMap::getIndexOfStyle(){
 
 void MindMap::setIndexOfStyle(int index){
     indexOfStyle = index;
-    masterNode->setNodePainter(NodeStyleAnalyzer::createNodeStyle(index));
+    this->nodePainter = NodeStyleAnalyzer::createNodeStyle(indexOfStyle);
 }
 
 bool MindMap::isPathEmpty(){
     return filepath.isEmpty();
 }
 
-void MindMap::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QGraphicsScene::mousePressEvent(event);
-
-    // qDebug() << "scene" << event->scenePos();
-}
-
-void MindMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    QGraphicsScene::mouseMoveEvent(event);
-
-    //qDebug() << "scene" << event->scenePos();
-}
-
-void MindMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    QGraphicsScene::mouseReleaseEvent(event);
+NodeStyle* MindMap::getNodePainter(){
+    return nodePainter;
 }

@@ -15,7 +15,6 @@ public:
 
     void setContent(QString content);
     void setIndexOfMaster(int index);
-    void setNodePainter(NodeStyle * style);
 
     void addNewNode();
     bool isMasterNode();
@@ -29,7 +28,6 @@ private:
     QString content;
     QSize size;
     int indexOfMaster=0;
-    NodeStyle * nodePainter = nullptr;
 
 protected:
     QRectF boundingRect() const override;
@@ -38,7 +36,6 @@ protected:
     void updateSize();
     qreal getDistance(QPointF a,QPointF b);
     bool isClosed();
-    void setChildNodeStyle(NodeStyle * style);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 //    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
 //    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;

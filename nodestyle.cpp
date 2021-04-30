@@ -25,3 +25,10 @@ QSize NodeStyle::getMargin(){
 int NodeStyle::getRadiusSize(){
     return radiusSize;
 }
+
+QDomElement NodeStyle::focusToDom(QDomDocument *doc){
+
+}
+QDomElement NodeStyle::nodeToDom(QDomDocument *doc,Node *node){
+
+}

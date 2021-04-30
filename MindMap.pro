@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui svg xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,6 +19,10 @@ SOURCES += \
     blockstyle.cpp \
     coloranalyzer.cpp \
     colorlinestyle.cpp \
+    exporteranalyzer.cpp \
+    exporterofmap.cpp \
+    htmlexporter.cpp \
+    imageexporter.cpp \
     main.cpp \
     mainwindow.cpp \
     mapfilereader.cpp \
@@ -28,12 +32,17 @@ SOURCES += \
     node.cpp \
     nodestyle.cpp \
     nodestyleanalyzer.cpp \
-    polylinestyle.cpp
+    polylinestyle.cpp \
+    svgexporter.cpp
 
 HEADERS += \
     blockstyle.h \
     coloranalyzer.h \
     colorlinestyle.h \
+    exporteranalyzer.h \
+    exporterofmap.h \
+    htmlexporter.h \
+    imageexporter.h \
     mainwindow.h \
     mapfilereader.h \
     mapfilewriter.h \
@@ -42,7 +51,8 @@ HEADERS += \
     node.h \
     nodestyle.h \
     nodestyleanalyzer.h \
-    polylinestyle.h
+    polylinestyle.h \
+    svgexporter.h
 
 FORMS += \
     mainwindow.ui

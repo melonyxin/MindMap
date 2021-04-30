@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include "coloranalyzer.h"
 #include "colorlinestyle.h"
+#include "mindmap.h"
 
 Node::Node(QGraphicsItem *parent, QString content)
     : QGraphicsItem(parent)
@@ -26,6 +27,7 @@ Node::~Node(){
 
 QRectF Node::boundingRect() const {
     QRectF rectF = getCustomRect();
+    NodeStyle *nodePainter = ((MindMap*)scene())->getNodePainter();
     if(nodePainter==nullptr) return rectF;
     QSize margin = nodePainter->getMargin();
     rectF.adjust(-margin.width(),-margin.height(),margin.width(),margin.height());
@@ -46,6 +48,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);     // 平滑的像素图变换算法
     painter->setRenderHint(QPainter::TextAntialiasing, true);          // 文本抗锯齿
 
+    NodeStyle *nodePainter = ((MindMap*)scene())->getNodePainter();
     nodePainter->paint(painter,(Node *)parentItem(),this);
 }
 
@@ -69,24 +72,8 @@ void Node::setIndexOfMaster(int index){
     indexOfMaster = index;
 }
 
-void Node::setNodePainter(NodeStyle * style){
-    if(isMasterNode()) {
-        delete nodePainter;
-    }
-
-    nodePainter = style;
-    this->updateSize();
-    setChildNodeStyle(style);
-}
-
-void Node::setChildNodeStyle(NodeStyle *style){
-    QList<QGraphicsItem *> list = childItems();
-    for(int i=0;i<list.length();i++){
-        Node * node =(Node *) list[i];
-        node->setNodePainter(style);
-    }
-}
 void Node::updateSize(){
+    NodeStyle *nodePainter = ((MindMap*)scene())->getNodePainter();
     if(nodePainter==nullptr) return;
     QFontMetrics fm(nodePainter->getFont());
     this->size.setWidth(fm.width(this->content)+nodePainter->getPadding().width()*2);
@@ -116,10 +103,10 @@ bool Node::isMasterNode(){
 }
 
 void Node::addNewNode(){
-    Node * newNode = new Node(nullptr,"输入内容");
+    Node * newNode = new Node();
     newNode->setParentItem(this);
     newNode->setPos(QPointF(100,100));
-    newNode->setNodePainter(nodePainter);
+    newNode->setContent("输入内容");
     if(isMasterNode()){
         indexOfMaster--;
         newNode->setIndexOfMaster(-indexOfMaster);
@@ -131,6 +118,7 @@ void Node::addNewNode(){
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF pos = event->pos();
     QRectF itemRect = this->getCustomRect();
+    NodeStyle *nodePainter = ((MindMap*)scene())->getNodePainter();
     int radiusSize = nodePainter->getRadiusSize();
     if(getDistance(pos,itemRect.topLeft()) <= radiusSize/2 && isClosed()){
         delete this;

@@ -18,17 +18,14 @@ public:
     bool isPathEmpty();
     int getIndexOfStyle();
     void setIndexOfStyle(int index);
+    NodeStyle *getNodePainter();
 
 private:
     QString filename;
     Node *masterNode;
     QString filepath;
     int indexOfStyle=0;
-
-protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)Q_DECL_OVERRIDE;
+    NodeStyle * nodePainter = nullptr;
 
 signals:
 

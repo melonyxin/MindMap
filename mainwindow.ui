@@ -31,9 +31,18 @@
     <property name="title">
      <string>文件</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>导出为</string>
+     </property>
+     <addaction name="actionExportImage"/>
+     <addaction name="actionExportHTML"/>
+     <addaction name="actionExportSVG"/>
+    </widget>
     <addaction name="actionNewFile"/>
     <addaction name="actionOpenFile"/>
     <addaction name="actionSaveFile"/>
+    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -146,6 +155,21 @@
    </property>
    <property name="text">
     <string>黄色</string>
+   </property>
+  </action>
+  <action name="actionExportImage">
+   <property name="text">
+    <string>图片</string>
+   </property>
+  </action>
+  <action name="actionExportHTML">
+   <property name="text">
+    <string>HTML</string>
+   </property>
+  </action>
+  <action name="actionExportSVG">
+   <property name="text">
+    <string>SVG</string>
    </property>
   </action>
  </widget>

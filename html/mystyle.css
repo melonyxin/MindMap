@@ -1,0 +1,52 @@
+
+body{
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+}
+#mysvg{
+    background: #EEEEF3;
+}
+.node-container {
+  fill-opacity: 1;
+  font-family: 'SimSun';
+  font-size: 9;
+  font-weight: 400;
+  font-style: normal;
+  stroke-opacity: 1;
+  stroke-linecap:square;
+  stroke-linejoin: bevel;
+}
+.node {
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  fill-opacity: 0;
+}
+.child-line{
+  fill-rule: evenodd;
+  fill: none;
+}
+.node text {
+  fill-opacity: 1;
+  stroke: none;
+  font-size: 25;
+  font-weight: 700;
+  font-style: normal;
+  font-family: 'SimSun';
+}
+
+#markupRect{
+  stroke-opacity: 1;
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+  font-size: 25;
+  font-weight: 700;
+  font-style: normal;
+  font-family: 'SimSun';
+  display: none;
+  z-index: 100;
+}
+#close_icon,#add_icon{
+    cursor: pointer;
+}

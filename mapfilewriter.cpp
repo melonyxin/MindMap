@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
 
 MapFileWriter::MapFileWriter(MindMap *map)
 {

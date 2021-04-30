@@ -11,6 +11,8 @@
 #include "colorlinestyle.h"
 #include <QMessageBox>
 #include <QDebug>
+#include "exporteranalyzer.h"
+#include "exporterofmap.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     QTabBar * tabBar = tabWidget->tabBar();
     tabWidget->setTabsClosable(true);
 
+    // 样式选项被点击事件，切换样式
     connect(grp,&QActionGroup::triggered,this,[=](QAction* style){
         int index = actionList.indexOf(style);
         int current = tabBar->currentIndex();
@@ -51,25 +54,31 @@ MainWindow::MainWindow(QWidget *parent)
         mapStyleList[current] = index;
     });
 
+    // 脑图标签页关闭；新建脑图按钮
     connect(tabBar,&QTabBar::tabCloseRequested,tabWidget,&QTabWidget::removeTab);
     connect(ui->actionNewFile,&QAction::triggered,[=](){
         MindMap * board = new MindMap(this, "NewFile");
         Node *masterNode = new Node();
-        masterNode->setContent("开始");
-        masterNode->setPos(QPointF(0,0));
         board->addMasterNode(masterNode);
-        board->setIndexOfStyle(0);
+        masterNode->setContent("开始");
+        masterNode->setPos(QPointF(0,0));  
         mapStyleList.append(board->getIndexOfStyle());
         tabWidget->addTab(createTab(board),board->getFilename());
     });
 
+    // 保存文件按钮
     connect(ui->actionSaveFile,&QAction::triggered,[=](){
         QGraphicsView * view = (QGraphicsView *) tabWidget->currentWidget();
+        if(view==nullptr) {
+            QMessageBox::critical(this, "错误", tr("请先打开一个脑图！"),QMessageBox::Yes);
+            return;
+        }
         MindMap * current = (MindMap *) view->scene();
         saveMindMapFile(current);
         tabBar->setTabText(tabBar->currentIndex(),current->getFilename());
     });
 
+    // 打开文件按钮
     connect(ui->actionOpenFile,&QAction::triggered,[=](){
         MindMap * map = openMindMapFile();
         if(map!=nullptr){
@@ -78,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
+    // 脑图标签栏切换点击事件：切换对应选中样式
     connect(tabBar,&QTabBar::currentChanged,[=](int index){
         if(index < 0) return;
         if(index >= mapStyleList.length()) return;
@@ -85,8 +95,36 @@ MainWindow::MainWindow(QWidget *parent)
         actionList[mapStyleList[index]]->setChecked(true);
     });
 
+    // 脑图标签移除事件
     connect(tabBar,&QTabBar::tabCloseRequested,[=](int index){
         mapStyleList.removeAt(index);
+    });
+
+
+    // 导出按钮组
+    QActionGroup *exporterGroup = new QActionGroup(this);
+    QList<QAction *> itemsOfExporter = ui->menuExport->actions();
+    for(int i=0;i<itemsOfExporter.length();i++)
+        exporterGroup->addAction(itemsOfExporter[i]);
+
+    connect(exporterGroup,&QActionGroup::triggered,this,[=](QAction* style){
+        int index = itemsOfExporter.indexOf(style);
+        QGraphicsView * view = (QGraphicsView *) tabWidget->currentWidget();
+        if(view==nullptr) {
+            QMessageBox::critical(this, "错误", tr("请先打开一个脑图！"),QMessageBox::Yes);
+            return;
+        }
+        MindMap * current = (MindMap *) view->scene();
+        QString suffix[] = {
+            "图片文件(*.PNG)",
+            "网页文件(*.html)",
+            "SVG文件(*.svg)"
+        };
+        QString fileName = QFileDialog::getSaveFileName(this,tr("导出"),current->getFilename(),suffix[index]);
+        ExporterOfMap * exporter = ExporterAnalyzer::createExporter(index);
+        if(!exporter->exportAsFile(current,fileName)){
+            QMessageBox::critical(this, "错误", tr("保存失败！"),QMessageBox::Yes);
+        }
     });
 
     setCentralWidget(tabWidget);
