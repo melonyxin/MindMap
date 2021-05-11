@@ -56,6 +56,10 @@ QString Node::getContent(){
     return this->content;
 }
 
+QString Node::getRemark(){
+    return this->remark;
+}
+
 QRectF Node::getCustomRect(void) const {
     QPointF centerPos(0, 0);
 
@@ -66,6 +70,10 @@ QRectF Node::getCustomRect(void) const {
 void Node::setContent(QString content){
     this->content = content;
     this->updateSize();
+}
+
+void Node::setRemark(QString remark){
+    this->remark = remark;
 }
 
 void Node::setIndexOfMaster(int index){

@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <QGraphicsView>
+#include "node.h"
+#include <QPlainTextEdit>
 
 class MindMapView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit MindMapView(QWidget *parent = nullptr);
+    explicit MindMapView(QWidget *parent = nullptr,QPlainTextEdit *textEdit=nullptr);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -19,6 +21,8 @@ protected:
 private:
     QPoint _mouseLBtnDown;
     bool _isLBtnDown = false;
+    Node * focusNode = nullptr;
+    QPlainTextEdit *textEdit;
 
 signals:
 

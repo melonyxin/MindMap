@@ -4,8 +4,9 @@
 #include <QGraphicsItem>
 #include <QInputDialog>
 #include <node.h>
+#include "mainwindow.h"
 
-MindMapView::MindMapView(QWidget *parent) : QGraphicsView(parent)
+MindMapView::MindMapView(QWidget *parent,QPlainTextEdit *textEdit) : QGraphicsView(parent)
 {
     //隐藏水平/竖直滚动条
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -19,16 +20,33 @@ MindMapView::MindMapView(QWidget *parent) : QGraphicsView(parent)
     setDragMode(QGraphicsView::ScrollHandDrag);
 
     setBackgroundBrush(QColor(238,238,243));
+    this->textEdit = textEdit;
 }
 
 void MindMapView::mousePressEvent(QMouseEvent *event) {
     QGraphicsView::mousePressEvent(event);
 
-    if (event->button() == Qt::LeftButton){
-        if (scene()->itemAt(mapToScene(event->pos()), transform()) == nullptr) {
-            _mouseLBtnDown = event->pos();
-            _isLBtnDown = true;
+    QPointF pointScene=mapToScene(event->pos()); //转换到Scene坐标
+    QGraphicsItem  *item=NULL;
+    QGraphicsScene * scene = this->scene();
+    item=scene->itemAt(pointScene,transform()); //获取光标下的绘图项
+
+    if (item == NULL){ //没有绘图项
+        if(focusNode != nullptr){
+            focusNode->setRemark(textEdit->toPlainText());
         }
+        focusNode = nullptr;
+        textEdit->clear();
+        return;
+    }
+
+    if(item->type()==65536){
+        if(focusNode != nullptr){
+            focusNode->setRemark(textEdit->toPlainText());
+        }
+        focusNode = (Node *) item;
+        textEdit->clear();
+        textEdit->appendPlainText(focusNode->getRemark());
     }
 }
 

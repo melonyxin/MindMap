@@ -13,6 +13,8 @@
 #include <QDebug>
 #include "exporteranalyzer.h"
 #include "exporterofmap.h"
+#include <QPlainTextEdit>
+#include <QToolBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -36,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     actionList = grp->actions();
 
-    QTabWidget * tabWidget = new QTabWidget();
+    QTabWidget * tabWidget = new QTabWidget(this);
     QTabBar * tabBar = tabWidget->tabBar();
     tabWidget->setTabsClosable(true);
 
@@ -128,6 +130,15 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     setCentralWidget(tabWidget);
+
+
+    QToolBar * texttool = new QToolBar("备注",this);
+    textEdit = new QPlainTextEdit(texttool);
+    addToolBar(Qt::RightToolBarArea,texttool);
+    texttool->addAction("备注");
+    texttool->addWidget(textEdit);
+    texttool->setMovable(false);
+    resize(1600,900);
 }
 
 MainWindow::~MainWindow()
@@ -160,7 +171,11 @@ MindMap * MainWindow::openMindMapFile(){
 }
 
 QGraphicsView * MainWindow::createTab(MindMap * scene){
-    MindMapView * view = new MindMapView(this);
+    MindMapView * view = new MindMapView(this,textEdit);
     view->setScene(scene);
     return view;
+}
+
+QPlainTextEdit *MainWindow::getTextEdit(){
+    return textEdit;
 }

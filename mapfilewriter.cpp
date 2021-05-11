@@ -17,6 +17,7 @@ QJsonObject MapFileWriter::nodeToJson(Node *node){
     QJsonArray children;
 
     data.insert("content", node->getContent());
+    data.insert("remark", node->getRemark());
     data.insert("pos_x", node->pos().x());
     data.insert("pos_y", node->pos().y());
     data.insert("indexOfMaster", node->getIndexOfMaster());

@@ -15,17 +15,21 @@ public:
 
     void setContent(QString content);
     void setIndexOfMaster(int index);
+    void setRemark(QString remark);
+
 
     void addNewNode();
     bool isMasterNode();
 
     QString getContent();
+    QString getRemark();
     QRectF getCustomRect(void) const;
     int getIndexOfMaster();
     QSize getSize();
 
 private:
     QString content;
+    QString remark;
     QSize size;
     int indexOfMaster=0;
 
