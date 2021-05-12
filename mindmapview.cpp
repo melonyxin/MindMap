@@ -50,26 +50,6 @@ void MindMapView::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-void MindMapView::mouseMoveEvent(QMouseEvent *event) {
-    QGraphicsView::mouseMoveEvent(event);
-    if (_isLBtnDown){
-        QPointF ptNow = mapToScene(event->pos());
-        QPointF movePt = ptNow - mapToScene(_mouseLBtnDown);
-
-        //根据鼠标当前的点作为定位点
-
-        QPoint nowCenter(-movePt.x(),  -movePt.y());
-        //centerOn((nowCenter));
-    }
-}
-
-void MindMapView::mouseReleaseEvent(QMouseEvent *event) {
-    QGraphicsView::mouseReleaseEvent(event);
-    if (event->button() == Qt::LeftButton) {
-        _isLBtnDown = false;
-    }
-}
-
 void MindMapView::mouseDoubleClickEvent(QMouseEvent *event){
     QGraphicsView::mouseDoubleClickEvent(event);
 

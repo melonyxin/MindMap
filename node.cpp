@@ -136,17 +136,3 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
     QGraphicsItem::mousePressEvent(event);
 }
-
-//void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-//    QGraphicsItem::mouseMoveEvent(event);
-//    QPointF mv = pressPos - event->scenePos();
-//    setPos(startPos - mv);
-//    update();
-//}
-
-//void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-//    QGraphicsItem::mouseReleaseEvent(event);
-//    qDebug() << "scene" <<event->scenePos();
-//    qDebug() << "node" <<pos();
-//    qDebug() << "screen" <<event->pos();
-//}
